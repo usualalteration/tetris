@@ -21,7 +21,7 @@ export const GameOverModal = ({
   }
 
   return (
-    <Dialog open={gameOver} onOpenChange={() => {}}>
+    <Dialog open={gameOver} onOpenChange={(open) => !open && onRestart()}>
       <DialogContent className="sm:max-w-md bg-gray-900 border-gray-800 text-white">
         <DialogHeader>
           <DialogTitle className="text-3xl font-bold text-center text-red-500">
@@ -38,11 +38,11 @@ export const GameOverModal = ({
             <span className="text-2xl font-bold text-white font-mono">{score}</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Lines</span>
+            <span className="text-xs text-gray-400 uppercase tracking-wider mb-2">Lines</span>
             <span className="text-2xl font-bold text-white font-mono">{lines}</span>
           </div>
           <div className="flex flex-col items-center">
-            <span className="text-xs text-gray-400 uppercase tracking-wider">Level</span>
+            <span className="text-xs text-gray-400 uppercase tracking-wider mb-2">Level</span>
             <span className="text-2xl font-bold text-white font-mono">{level + 1}</span>
           </div>
         </div>
