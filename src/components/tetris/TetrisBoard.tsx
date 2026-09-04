@@ -40,7 +40,7 @@ export const TetrisBoard = ({
       gridCells.push(
         <div
           key={`${y}-${x}`}
-          className={`w-full h-8 sm:h-9 border rounded-[2px] ${cellClass}`}
+          className={`w-full h-full border rounded-[2px] ${cellClass}`}
         />
       );
     }
@@ -48,9 +48,10 @@ export const TetrisBoard = ({
 
   return (
     <div
-      className="grid gap-px bg-gray-800 p-1 rounded-lg shadow-2xl"
+      className="grid gap-px bg-gray-800 p-1 rounded-lg shadow-2xl w-full h-full"
       style={{
         gridTemplateColumns: `repeat(${BOARD_WIDTH}, minmax(0, 1fr))`,
+        gridTemplateRows: `repeat(${BOARD_HEIGHT}, minmax(0, 1fr))`,
       }}
     >
       {gridCells}

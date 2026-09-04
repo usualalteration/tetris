@@ -69,16 +69,38 @@ export const useTetris = () => {
   const pausedRef = useRef(paused);
   pausedRef.current = paused;
 
+  // Mirror the mutable game state into refs so the drop loop can read the
+  // latest values without listing them as effect dependencies. Otherwise every
+  // rotation/move (which updates currentPiece/board) would tear down and
+  // recreate the interval, resetting the fall countdown and blocking descent.
+  const boardRef = useRef(board);
+  boardRef.current = board;
+
+  const currentPieceRef = useRef(currentPiece);
+  currentPieceRef.current = currentPiece;
+
+  const nextPieceRef = useRef(nextPiece);
+  nextPieceRef.current = nextPiece;
+
+  const levelRef = useRef(level);
+  levelRef.current = level;
+
   useEffect(() => {
     if (!gameOver && !paused) {
       gameLoopRef.current = setInterval(() => {
         if (pausedRef.current || gameOverRef.current) return;
 
+        const board = boardRef.current;
+        const currentPiece = currentPieceRef.current;
+        const level = levelRef.current;
+
+        if (!currentPiece) return;
+
         setPosition((prev) => {
           const newPosition = { ...prev, y: prev.y + 1 };
 
-          if (checkCollision(board, currentPiece!, newPosition)) {
-            const mergedBoard = mergePieceToBoard(board, currentPiece!, prev);
+          if (checkCollision(board, currentPiece, newPosition)) {
+            const mergedBoard = mergePieceToBoard(board, currentPiece, prev);
             const { board: clearedBoard, linesCleared } = clearLines(mergedBoard);
 
             if (prev.y <= 0) {
@@ -103,7 +125,7 @@ export const useTetris = () => {
               setScore((prevScore) => prevScore + calculateScore(linesCleared, level));
             }
 
-            const newPiece = nextPiece!;
+            const newPiece = nextPieceRef.current!;
             const newNextPiece = getRandomTetromino();
             setNextPiece(newNextPiece);
             setCurrentPiece(newPiece);
@@ -129,7 +151,7 @@ export const useTetris = () => {
         gameLoopRef.current = null;
       }
     };
-  }, [board, currentPiece, nextPiece, dropInterval, level, gameOver, paused]);
+  }, [dropInterval, gameOver, paused]);
 
   const move = useCallback(
     (direction: Direction) => {
